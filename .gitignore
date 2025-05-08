@@ -1,6 +1,7 @@
 __pycache__/
 .ipynb_checkpoints/
-data/
+data/*
+logs/*
 runs/
 Places2_simp/
 Places2_simp.zip

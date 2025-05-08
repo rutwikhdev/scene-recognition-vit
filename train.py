@@ -36,7 +36,7 @@ def train(args):
     model = load_vit_model(num_labels=len(class_names)).to(device)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
-    scheduler = init_scheduler(train_loader, optimizer, args.epochs)
+    scheduler = init_scheduler(args.scheduler, train_loader, optimizer, args.epochs)
     loss_fn = nn.CrossEntropyLoss()
     writer = SummaryWriter()
 

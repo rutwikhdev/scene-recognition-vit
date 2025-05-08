@@ -15,17 +15,27 @@ def set_random_seed(seed=42):
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
-def init_scheduler(train_loader, optimizer, epochs=10):
+def init_scheduler(scheduler, train_loader, optimizer, epochs=10):
     num_epochs = epochs
     train_steps_per_epoch = len(train_loader)
     total_training_steps = num_epochs * train_steps_per_epoch
     warmup_steps = int(0.1 * total_training_steps)
 
-    scheduler = get_cosine_schedule_with_warmup(
-        optimizer,
-        num_warmup_steps=warmup_steps,
-        num_training_steps=total_training_steps
-    )
+    if scheduler == "cosine":
+        scheduler = get_cosine_schedule_with_warmup(
+            optimizer,
+            num_warmup_steps=warmup_steps,
+            num_training_steps=total_training_steps
+        )
+    elif scheduler == "onecyclelr":
+        scheduler = torch.optim.lr_scheduler.OneCycleLR(
+            optimizer,
+            max_lr=0.0001,
+            steps_per_epoch=len(train_loader),
+            epochs=num_epochs
+        )
+    else:
+        raise Exception(f"Learning rate scheduler {scheduler} not supported")
 
     return scheduler
 

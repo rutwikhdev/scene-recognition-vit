@@ -11,6 +11,8 @@ def get_args():
                         help='Batch size for training')
     parser.add_argument('--lr', type=float, default=3e-4,
                         help='Learning rate')
+    parser.add_argument('--scheduler', type=str, default='cosine',
+                        help='Learning rate scheduler')
     parser.add_argument('--model-name', type=str, default='vit_base',
                         help='Model architecture to use')
     parser.add_argument('--save-path', type=str, default='vit_scene_classifier.pth',

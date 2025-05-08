@@ -47,6 +47,27 @@ def evaluate(model, dataloader, device):
     top5_acc = 100 * correct_top5 / total
     return top1_acc, top5_acc
 
+def accuracy(output, target, topk=(1,)):
+    """Computes the accuracy over the k top predictions for the specified values of k"""
+    with torch.no_grad():
+        maxk = max(topk)
+        batch_size = target.size(0)
+
+        if isinstance(output, (tuple, list)):
+            output = output[0]
+
+        _, pred = output.topk(maxk, 1, True, True)
+        pred = pred.t()
+        correct = pred.eq(target.view(1, -1).expand_as(pred))
+
+        res = []
+        for k in topk:
+            correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
+            acc = correct_k.mul_(100.0 / batch_size)
+            res.append(acc.item())
+        return res
+
+
 def plot_confusion_matrix(model, dataloader, class_names, device, save_path="confusion_matrix.png"):
     model.eval()
     all_preds = []

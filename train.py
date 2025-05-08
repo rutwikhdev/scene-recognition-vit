@@ -35,7 +35,7 @@ def train(args):
     train_loader, val_loader, class_names = get_dataloaders(args.data_dir, batch_size=args.batch_size)
     model = load_vit_model(num_labels=len(class_names)).to(device)
 
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr, weight_decay=1e-3)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
     scheduler = init_scheduler(train_loader, optimizer, args.epochs)
     loss_fn = nn.CrossEntropyLoss()
     writer = SummaryWriter()
@@ -66,6 +66,8 @@ def train(args):
 
     print("\n========Testing on validation set==========\n")
     acc1, acc5 = evaluate(model, val_loader, device)
+    print("top-1: ", acc1)
+    print("top-5: ", acc5)
     writer.add_scalar("Loss/train", total_loss, epoch)
     writer.add_scalar("Accuracy/Top1", acc1, epoch)
     writer.add_scalar("Accuracy/Top5", acc5, epoch)

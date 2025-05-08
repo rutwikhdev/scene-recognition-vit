@@ -5,3 +5,4 @@ scikit-learn
 matplotlib
 tensorboard
 tqdm
+seaborn

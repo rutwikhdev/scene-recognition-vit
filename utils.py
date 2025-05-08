@@ -1,0 +1,74 @@
+import random
+
+import torch
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
+import numpy as np
+
+from transformers import get_cosine_schedule_with_warmup
+
+
+def set_random_seed(seed=42):
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+
+def init_scheduler(train_loader, optimizer, epochs=10):
+    num_epochs = epochs
+    train_steps_per_epoch = len(train_loader)
+    total_training_steps = num_epochs * train_steps_per_epoch
+    warmup_steps = int(0.1 * total_training_steps)
+
+    scheduler = get_cosine_schedule_with_warmup(
+        optimizer,
+        num_warmup_steps=warmup_steps,
+        num_training_steps=total_training_steps
+    )
+
+    return scheduler
+
+def evaluate(model, dataloader, device):
+    model.eval()
+    correct_top1 = 0
+    correct_top5 = 0
+    total = 0
+
+    with torch.no_grad():
+        for images, labels in dataloader:
+            images, labels = images.to(device), labels.to(device)
+            outputs = model(pixel_values=images).logits
+            _, top5 = outputs.topk(5, dim=1)
+            correct_top1 += (top5[:, 0] == labels).sum().item()
+            correct_top5 += sum([label in top for label, top in zip(labels, top5)])
+            total += labels.size(0)
+
+    top1_acc = 100 * correct_top1 / total
+    top5_acc = 100 * correct_top5 / total
+    return top1_acc, top5_acc
+
+def plot_confusion_matrix(model, dataloader, class_names, device, save_path="confusion_matrix.png"):
+    model.eval()
+    all_preds = []
+    all_labels = []
+
+    with torch.no_grad():
+        for images, labels in dataloader:
+            images = images.to(device)
+            outputs = model(pixel_values=images).logits
+            preds = outputs.argmax(dim=1).cpu().numpy()
+            all_preds.extend(preds)
+            all_labels.extend(labels.numpy())
+
+    cm = confusion_matrix(all_labels, all_preds)
+    plt.figure(figsize=(16, 12))  # Increased size
+
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=class_names, yticklabels=class_names, cbar=False)
+    plt.xlabel('Predicted Labels', fontsize=14)
+    plt.ylabel('True Labels', fontsize=14)
+    plt.xticks(rotation=45, ha='right', fontsize=12)
+    plt.yticks(rotation=0, fontsize=12)
+    plt.title('Confusion Matrix', fontsize=16)
+    plt.tight_layout()
+    plt.savefig(save_path)
+    plt.show()

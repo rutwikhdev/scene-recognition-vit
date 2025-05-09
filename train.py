@@ -39,7 +39,6 @@ def train(args):
 
     # setup optimizer, lr_scheduler, loss and tensorboard
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr or 3e-4)
-    scheduler = init_scheduler(args.scheduler, train_loader, optimizer, args.epochs)
     loss_fn = nn.CrossEntropyLoss()
     writer = SummaryWriter()
 
@@ -61,8 +60,6 @@ def train(args):
             total_loss += loss.item()
 
             # log scheduler
-            current_lr = scheduler.get_last_lr()[0]
-            writer.add_scalar("LR", current_lr, epoch)
             print(f"Epoch [{epoch+1}/{args.epochs}] - Batch [{batch_idx+1}/{len(train_loader)}] Loss: {loss.item():.2f}")
             # , Accuracy: {accuracy(outputs, labels)[0]:.2f}
 

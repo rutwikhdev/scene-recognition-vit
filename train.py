@@ -1,10 +1,11 @@
 import torch
 from torch import nn
+from torch.utils.tensorboard import SummaryWriter
+
 from src.args import get_args
 from src.dataset import get_dataloaders
 from src.models import load_vit_model
 from src.utils import set_random_seed, init_scheduler, evaluate, accuracy, plot_confusion_matrix
-from torch.utils.tensorboard import SummaryWriter
 from src.logger import Logger
 
 import sys
@@ -35,6 +36,7 @@ def train(args):
     train_loader, val_loader, class_names = get_dataloaders(args.data_dir, batch_size=args.batch_size)
     model = load_vit_model(num_labels=len(class_names)).to(device)
 
+    # setup optimizer, lr_scheduler, loss and tensorboard
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
     scheduler = init_scheduler(args.scheduler, train_loader, optimizer, args.epochs)
     loss_fn = nn.CrossEntropyLoss()
@@ -57,7 +59,7 @@ def train(args):
             # log scheduler
             current_lr = scheduler.get_last_lr()[0]
             writer.add_scalar("LR", current_lr, epoch)
-            print(f"Epoch [{epoch+1}/{args.epochs}] - Batch [{batch_idx+1}/{len(train_loader)}] Loss: {loss.item():.2f}, Accuracy: {accuracy(outputs, labels)}")
+            print(f"Epoch [{epoch+1}/{args.epochs}] - Batch [{batch_idx+1}/{len(train_loader)}] Loss: {loss.item():.2f}, Accuracy: {accuracyht(outputs, labels)}")
 
         acc1, acc5 = evaluate(model, val_loader, device)
         writer.add_scalar("Loss/train", total_loss, epoch)

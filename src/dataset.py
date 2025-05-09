@@ -2,6 +2,10 @@ import torch
 from torch.utils.data import random_split, DataLoader
 from torchvision.datasets import ImageFolder
 from torchvision import transforms
+
+from torch.utils.data import default_collate
+from torchvision.transforms import v2
+
 import tqdm
 
 def get_dataloaders(data_dir, batch_size=64):
@@ -47,6 +51,11 @@ def get_dataloaders(data_dir, batch_size=64):
 
     return train_loader, test_loader, class_names
 
+def collate_fn(batch, num_classes=40):
+    cutmix = v2.CutMix(num_classes=num_classes)
+    mixup = v2.MixUp(num_classes=num_classes)
+    cutmix_or_mixup = v2.RandomChoice([cutmix, mixup])
+    return cutmix_or_mixup(*default_collate(batch))
 
 def calculate_mean_std(dataset):
     """
@@ -70,3 +79,4 @@ def calculate_mean_std(dataset):
 
     print(f"Mean per channel(R, G, B): {means}")
     print(f"Std per channel(R, G, B): {stds}")
+

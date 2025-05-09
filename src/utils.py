@@ -59,21 +59,27 @@ def evaluate(model, dataloader, device):
     return top1_acc, top5_acc
 
 def accuracy(output, target, topk=(1,)):
-    """Computes the accuracy over the k top predictions for the specified values of k"""
+    """Computes the accuracy over the k top predictions for the specified values of k.
+       Works with either hard or one-hot targets."""
     with torch.no_grad():
-        maxk = max(topk)
-        batch_size = target.size(0)
-
         if isinstance(output, (tuple, list)):
             output = output[0]
 
-        _, pred = output.topk(maxk, 1, True, True)
-        pred = pred.t()
-        correct = pred.eq(target.view(1, -1).expand_as(pred))
+        # If target is one-hot (float and 2D), convert to class indices
+        if target.ndim == 2 and target.dtype in (torch.float32, torch.float64):
+            target = target.argmax(dim=1)
+
+        maxk = max(topk)
+        batch_size = target.size(0)
+
+        _, pred = output.topk(maxk, dim=1, largest=True, sorted=True)  # [B, k]
+        pred = pred.t()  # [k, B]
+
+        correct = pred.eq(target.view(1, -1).expand_as(pred))  # [k, B]
 
         res = []
         for k in topk:
-            correct_k = correct[:k].view(-1).float().sum(0, keepdim=True)
+            correct_k = correct[:k].reshape(-1).float().sum(0, keepdim=True)
             acc = correct_k.mul_(100.0 / batch_size)
             res.append(acc.item())
         return res

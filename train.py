@@ -48,10 +48,15 @@ def train(args):
         total_loss = 0
         for batch_idx, (images, labels) in enumerate(train_loader):
             images, labels = images.to(device), labels.to(device)
-            # Zero the gradients
+
+            # set gradients to zero
             optimizer.zero_grad()
-            outputs = model(pixel_values=images) # Pass input with correct kwarg name
+
+            # forward prop
+            outputs = model(pixel_values=images)
             logits = outputs.logits
+
+            # backprop
             loss = loss_fn(logits, labels)
             loss.backward()
 
@@ -59,24 +64,20 @@ def train(args):
             optimizer.step()
             total_loss += loss.item()
 
-            # log scheduler
             print(f"Epoch [{epoch+1}/{args.epochs}] - Batch [{batch_idx+1}/{len(train_loader)}] Loss: {loss.item():.2f}")
-            # , Accuracy: {accuracy(outputs, labels)[0]:.2f}
 
-        acc1, acc5 = evaluate(model, val_loader, device)
         writer.add_scalar("Loss/train", total_loss, epoch)
-        writer.add_scalar("Accuracy/Top1", acc1, epoch)
-        writer.add_scalar("Accuracy/Top5", acc5, epoch)
+
+    # saving model
+    torch.save(model.state_dict(), f"logs/{log_name}/{args.model_name}_classifier.pth")
 
     print("\n========Testing on validation set==========\n")
     acc1, acc5 = evaluate(model, val_loader, device)
     print("top-1: ", acc1)
     print("top-5: ", acc5)
     writer.add_scalar("Loss/train", total_loss, epoch)
-    writer.add_scalar("Accuracy/Top1", acc1, epoch)
-    writer.add_scalar("Accuracy/Top5", acc5, epoch)
 
-    torch.save(model.state_dict(), "vit_scene_classifier.pth")
+
     plot_confusion_matrix(model, val_loader, class_names, device)
 
 if __name__ == "__main__":

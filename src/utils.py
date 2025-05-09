@@ -40,6 +40,7 @@ def init_scheduler(scheduler, train_loader, optimizer, epochs=10):
     return scheduler
 
 def evaluate(model, dataloader, device):
+    model.to(device)
     model.eval()
     correct_top1 = 0
     correct_top5 = 0
@@ -47,9 +48,16 @@ def evaluate(model, dataloader, device):
 
     with torch.no_grad():
         for images, labels in dataloader:
-            images, labels = images.to(device), labels.to(device)
+            images = images.to(device)
+            labels = labels.to(device)
+
+            # Convert one-hot encoded labels to class indices
+            if labels.dim() > 1 and labels.size(1) > 1:
+                labels = labels.argmax(dim=1)
+
             outputs = model(pixel_values=images).logits
             _, top5 = outputs.topk(5, dim=1)
+
             correct_top1 += (top5[:, 0] == labels).sum().item()
             correct_top5 += sum([label in top for label, top in zip(labels, top5)])
             total += labels.size(0)

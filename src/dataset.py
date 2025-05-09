@@ -46,8 +46,8 @@ def get_dataloaders(data_dir, batch_size=64):
     train_dataset.dataset.transform = train_transforms
     val_dataset.dataset.transform = val_transforms
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    test_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, collate_fn=collate_fn)
+    test_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, collate_fn=collate_fn)
 
     return train_loader, test_loader, class_names
 

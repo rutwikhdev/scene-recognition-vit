@@ -38,7 +38,7 @@ def train(args):
     model = load_vit_model(num_labels=len(class_names)).to(device)
 
     # setup optimizer, lr_scheduler, loss and tensorboard
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr or 3e-4)
     scheduler = init_scheduler(args.scheduler, train_loader, optimizer, args.epochs)
     loss_fn = nn.CrossEntropyLoss()
     writer = SummaryWriter()
@@ -49,18 +49,22 @@ def train(args):
         total_loss = 0
         for batch_idx, (images, labels) in enumerate(train_loader):
             images, labels = images.to(device), labels.to(device)
-            outputs = model(pixel_values=images).logits
-            loss = loss_fn(outputs, labels)
+            # Zero the gradients
             optimizer.zero_grad()
+            outputs = model(pixel_values=images) # Pass input with correct kwarg name
+            logits = outputs.logits
+            loss = loss_fn(logits, labels)
             loss.backward()
+
+            # Update weights
             optimizer.step()
-            scheduler.step()
             total_loss += loss.item()
 
             # log scheduler
             current_lr = scheduler.get_last_lr()[0]
             writer.add_scalar("LR", current_lr, epoch)
-            print(f"Epoch [{epoch+1}/{args.epochs}] - Batch [{batch_idx+1}/{len(train_loader)}] Loss: {loss.item():.2f}, Accuracy: {accuracy(outputs, labels)}")
+            print(f"Epoch [{epoch+1}/{args.epochs}] - Batch [{batch_idx+1}/{len(train_loader)}] Loss: {loss.item():.2f}")
+            # , Accuracy: {accuracy(outputs, labels)[0]:.2f}
 
         acc1, acc5 = evaluate(model, val_loader, device)
         writer.add_scalar("Loss/train", total_loss, epoch)

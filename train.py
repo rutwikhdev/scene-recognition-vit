@@ -20,7 +20,8 @@ def train(args):
 
     # Define log file name with timestamp
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    log_filename = f"log_{getpass.getuser()}_{timestamp}.txt"
+    log_name = f"log_{getpass.getuser()}_{timestamp}"
+    log_filename = f"{log_name}/{log_name}.txt"
 
     sys.stdout = Logger(osp.join("logs", log_filename))
     print("\n==========\n")
@@ -59,7 +60,7 @@ def train(args):
             # log scheduler
             current_lr = scheduler.get_last_lr()[0]
             writer.add_scalar("LR", current_lr, epoch)
-            print(f"Epoch [{epoch+1}/{args.epochs}] - Batch [{batch_idx+1}/{len(train_loader)}] Loss: {loss.item():.2f}, Accuracy: {accuracyht(outputs, labels)}")
+            print(f"Epoch [{epoch+1}/{args.epochs}] - Batch [{batch_idx+1}/{len(train_loader)}] Loss: {loss.item():.2f}, Accuracy: {accuracy(outputs, labels)}")
 
         acc1, acc5 = evaluate(model, val_loader, device)
         writer.add_scalar("Loss/train", total_loss, epoch)

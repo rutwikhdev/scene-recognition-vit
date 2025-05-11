@@ -100,9 +100,7 @@ def accuracy(output, target, topk=(1,)):
         return res
 
 
-def plot_confusion_matrix(
-    model, dataloader, class_names, device, save_path="confusion_matrix.png"
-):
+def plot_confusion_matrix(model, dataloader, class_names, device, save_path="confusion_matrix.png", save=True):
     model.eval()
     all_preds = []
     all_labels = []
@@ -133,5 +131,6 @@ def plot_confusion_matrix(
     plt.yticks(rotation=0, fontsize=12)
     plt.title("Confusion Matrix", fontsize=16)
     plt.tight_layout()
-    plt.savefig(save_path)
+    if save:
+        plt.savefig(save_path)
     plt.show()

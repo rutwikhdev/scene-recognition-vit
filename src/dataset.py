@@ -8,7 +8,7 @@ from torchvision.transforms import v2
 
 import tqdm
 
-def get_dataloaders(data_dir, batch_size=64):
+def get_dataloaders(data_dir, batch_size=64, cutmixup=False):
     """
     1. Load the dataset
     2. Apply transforms, resize, flip, rotate, scale, normalize
@@ -34,26 +34,53 @@ def get_dataloaders(data_dir, batch_size=64):
 
     val_transforms = transforms.Compose([
         transforms.Resize((224, 224)),
-        transforms.ToTensor()
+        transforms.ToTensor(),
+        transforms.Normalize(
+            mean=[0.4547, 0.4337, 0.4011],
+            std=[0.2266, 0.2237, 0.2316]
+        ),
     ])
 
-    full_dataset = ImageFolder(root=data_dir, transform=train_transforms)
+    # Load the full dataset to get the size
+    full_dataset = ImageFolder(root=data_dir)
     class_names = full_dataset.classes
+
+    # Split indices only (so you can reuse them)
     train_size = int(0.8 * len(full_dataset))
     val_size = len(full_dataset) - train_size
-    train_dataset, val_dataset = random_split(full_dataset, [train_size, val_size])
+    train_indices, val_indices = random_split(
+        range(len(full_dataset)), [train_size, val_size]
+    )
 
-    train_dataset.dataset.transform = train_transforms
-    val_dataset.dataset.transform = val_transforms
+    # Now create two separate datasets with their own transforms
+    train_dataset = ImageFolder(root=data_dir, transform=train_transforms)
+    val_dataset = ImageFolder(root=data_dir, transform=val_transforms)
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    test_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    # Subset them using the same indices
+    train_dataset = torch.utils.data.Subset(train_dataset, train_indices)
+    val_dataset = torch.utils.data.Subset(val_dataset, val_indices)
+
+    train_loader = DataLoader(
+        train_dataset, 
+        batch_size=batch_size, 
+        shuffle=True, 
+        collate_fn=cutmixup_da if cutmixup else None
+    )
+    test_loader = DataLoader(
+        val_dataset, 
+        batch_size=batch_size, 
+        shuffle=False, 
+        # collate_fn=cutmixup_da if cutmixup else None
+    )
 
     return train_loader, test_loader, class_names
 
-def collate_fn(batch, num_classes=40):
-    cutmix = v2.CutMix(num_classes=num_classes)
-    mixup = v2.MixUp(num_classes=num_classes)
+def cutmixup_da(batch, num_classes=40):
+    """
+    Implements cutmix or mixup data augmentation
+    """
+    cutmix = v2.CutMix(alpha=0.6, num_classes=num_classes)
+    mixup = v2.MixUp(alpha=0.2, num_classes=num_classes)
     cutmix_or_mixup = v2.RandomChoice([cutmix, mixup])
     return cutmix_or_mixup(*default_collate(batch))
 

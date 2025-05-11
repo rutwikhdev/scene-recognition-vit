@@ -6,3 +6,4 @@ matplotlib
 tensorboard
 tqdm
 seaborn
+numpy==1.23.5

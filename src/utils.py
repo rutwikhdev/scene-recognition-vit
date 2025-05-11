@@ -20,12 +20,19 @@ def init_scheduler(scheduler, train_loader, optimizer, epochs=10):
     train_steps_per_epoch = len(train_loader)
     total_training_steps = num_epochs * train_steps_per_epoch
     warmup_steps = int(0.1 * total_training_steps)
-
+    
     if scheduler == "cosine":
         scheduler = get_cosine_schedule_with_warmup(
             optimizer,
             num_warmup_steps=warmup_steps,
             num_training_steps=total_training_steps
+        )
+    elif scheduler == "cosinealr":
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(
+            optimizer,
+            T_0=10,
+            T_mult=1,
+            eta_min=2e-5
         )
     elif scheduler == "onecyclelr":
         scheduler = torch.optim.lr_scheduler.OneCycleLR(

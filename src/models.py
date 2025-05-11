@@ -8,22 +8,18 @@ def load_vit_model(model="vit_base", num_labels=40):
         )
     elif model == "swin":
         model = AutoModelForImageClassification.from_pretrained(
-            "swin-base-patch4-window7-224"
+            "microsoft/swin-tiny-patch4-window7-224"
         )
-    elif model == "swin-tiny":
+    elif model == "swinv2":
         model = AutoModelForImageClassification.from_pretrained(
-            "swin-tiny-patch4-window7-224"
+            "microsoft/swinv2-tiny-patch4-window8-256"
         )
     elif model == "dinov2":
         model = AutoModelForImageClassification.from_pretrained(
             "facebook/dinov2-base"
         )
-    elif model == "deit":
-        model = AutoModelForImageClassification.from_pretrained(
-            "facebook/deit-base-distilled-patch16-224"
-        )
     else:
-        raise Exception("Model architecture note supported")
+        raise Exception("Model architecture not supported")
 
     # remove gradient computation from existing layers
     for p in model.parameters():

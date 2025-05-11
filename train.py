@@ -1,6 +1,7 @@
 import torch
 from torch import nn
 from torch.utils.tensorboard import SummaryWriter
+from torch import autocast
 
 from src.args import get_args
 from src.dataset import get_dataloaders
@@ -31,15 +32,21 @@ def train(args):
     print("Using device: ", device)
     print(f"Model: {args.model_name}")
     print(f"Learning Rate: {args.lr}")
+    print(f"LR Scheduler: {args.scheduler or 'None'}")
     print(f"Epochs: {args.epochs}")
     print(f"Batch Size: {args.batch_size}")
 
-    train_loader, val_loader, class_names = get_dataloaders(args.data_dir, batch_size=args.batch_size)
-    model = load_vit_model(num_labels=len(class_names)).to(device)
+    train_loader, val_loader, class_names = get_dataloaders(args.data_dir, batch_size=args.batch_size, cutmixup=args.cutmixup)
+    torch.set_float32_matmul_precision('high')
+
+    model = load_vit_model(model=args.model_name, num_labels=len(class_names)).to(device)
+    model = torch.compile(model)
 
     # setup optimizer, lr_scheduler, loss and tensorboard
-    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr or 3e-4)
+    optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr or 3e-4, weight_decay=0.05)
     loss_fn = nn.CrossEntropyLoss()
+    if args.scheduler:
+        scheduler = init_scheduler(args.scheduler, train_loader, optimizer, args.epochs)
     writer = SummaryWriter()
 
     print("\n==========Starting Training========\n")
@@ -52,19 +59,25 @@ def train(args):
             # set gradients to zero
             optimizer.zero_grad()
 
-            # forward prop
-            outputs = model(pixel_values=images)
-            logits = outputs.logits
+            # Automatic Mixed Precision: https://docs.pytorch.org/docs/stable/notes/amp_examples.html
+            with autocast(device_type='cuda', dtype=torch.bfloat16):
+                # forward prop
+                outputs = model(pixel_values=images)
+                logits = outputs.logits
 
-            # backprop
-            loss = loss_fn(logits, labels)
-            loss.backward()
+                # backprop
+                loss = loss_fn(logits, labels)
+                loss.backward()
 
             # Update weights
             optimizer.step()
+                
             total_loss += loss.item()
+            cur_lr = scheduler.get_last_lr()[0] if args.scheduler else args.lr
+            print(f"Epoch [{epoch+1}/{args.epochs}] - Batch [{batch_idx+1}/{len(train_loader)}] Loss: {loss.item():.2f}, CurLR: {cur_lr}")
 
-            print(f"Epoch [{epoch+1}/{args.epochs}] - Batch [{batch_idx+1}/{len(train_loader)}] Loss: {loss.item():.2f}")
+        if args.scheduler:
+            scheduler.step()
 
         writer.add_scalar("Loss/train", total_loss, epoch)
 
@@ -78,7 +91,7 @@ def train(args):
     writer.add_scalar("Loss/train", total_loss, epoch)
 
 
-    plot_confusion_matrix(model, val_loader, class_names, device)
+    plot_confusion_matrix(model, val_loader, class_names, device, f"logs/{log_name}/confusion_matrix.png")
 
 if __name__ == "__main__":
     """

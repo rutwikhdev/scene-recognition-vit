@@ -14,6 +14,14 @@ def load_vit_model(model="vit_base", num_labels=40):
         model = AutoModelForImageClassification.from_pretrained(
             "swin-tiny-patch4-window7-224"
         )
+    elif model == "dinov2":
+        model = AutoModelForImageClassification.from_pretrained(
+            "facebook/dinov2-base"
+        )
+    elif model == "deit":
+        model = AutoModelForImageClassification.from_pretrained(
+            "facebook/deit-base-distilled-patch16-224"
+        )
     else:
         raise Exception("Model architecture note supported")
 

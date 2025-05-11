@@ -8,6 +8,7 @@ from torchvision.transforms import v2
 
 import tqdm
 
+
 def get_dataloaders(data_dir, batch_size=64, cutmixup=False):
     """
     1. Load the dataset
@@ -16,30 +17,32 @@ def get_dataloaders(data_dir, batch_size=64, cutmixup=False):
     4. Create a dataloader for the train and val
     5. Return the train and val dataloaders
     """
-    train_transforms = transforms.Compose([
-        transforms.Resize((224, 224)),
-        # Horizontal Flip
-        transforms.RandomHorizontalFlip(),
-        # Rotation
-        transforms.RandomRotation(20),
-        # Scaling
-        transforms.RandomAffine(degrees=0, translate=(0.1, 0.1), scale=(0.8, 1.2)),
-        transforms.ToTensor(),
-        # Normalize around mean and std for better convergence
-        transforms.Normalize(
-            mean=[0.4547, 0.4337, 0.4011],
-            std=[0.2266, 0.2237, 0.2316]
-        ),
-    ])
+    train_transforms = transforms.Compose(
+        [
+            transforms.Resize((224, 224)),
+            # Horizontal Flip
+            transforms.RandomHorizontalFlip(),
+            # Rotation
+            transforms.RandomRotation(20),
+            # Scaling
+            transforms.RandomAffine(degrees=0, translate=(0.1, 0.1), scale=(0.8, 1.2)),
+            transforms.ToTensor(),
+            # Normalize around mean and std for better convergence
+            transforms.Normalize(
+                mean=[0.4547, 0.4337, 0.4011], std=[0.2266, 0.2237, 0.2316]
+            ),
+        ]
+    )
 
-    val_transforms = transforms.Compose([
-        transforms.Resize((224, 224)),
-        transforms.ToTensor(),
-        transforms.Normalize(
-            mean=[0.4547, 0.4337, 0.4011],
-            std=[0.2266, 0.2237, 0.2316]
-        ),
-    ])
+    val_transforms = transforms.Compose(
+        [
+            transforms.Resize((224, 224)),
+            transforms.ToTensor(),
+            transforms.Normalize(
+                mean=[0.4547, 0.4337, 0.4011], std=[0.2266, 0.2237, 0.2316]
+            ),
+        ]
+    )
 
     # Load the full dataset to get the size
     full_dataset = ImageFolder(root=data_dir)
@@ -61,19 +64,20 @@ def get_dataloaders(data_dir, batch_size=64, cutmixup=False):
     val_dataset = torch.utils.data.Subset(val_dataset, val_indices)
 
     train_loader = DataLoader(
-        train_dataset, 
-        batch_size=batch_size, 
-        shuffle=True, 
-        collate_fn=cutmixup_da if cutmixup else None
+        train_dataset,
+        batch_size=batch_size,
+        shuffle=True,
+        collate_fn=cutmixup_da if cutmixup else None,
     )
     test_loader = DataLoader(
-        val_dataset, 
-        batch_size=batch_size, 
-        shuffle=False, 
+        val_dataset,
+        batch_size=batch_size,
+        shuffle=False,
         # collate_fn=cutmixup_da if cutmixup else None
     )
 
     return train_loader, test_loader, class_names
+
 
 def cutmixup_da(batch, num_classes=40):
     """
@@ -84,11 +88,12 @@ def cutmixup_da(batch, num_classes=40):
     cutmix_or_mixup = v2.RandomChoice([cutmix, mixup])
     return cutmix_or_mixup(*default_collate(batch))
 
+
 def calculate_mean_std(dataset):
     """
     Compute mean and std, useful for normalizing
     e.g. calculate_mean_std(full_dataset)
-    usage: 
+    usage:
         transforms.Normalize(
             mean=[0.4547, 0.4337, 0.4011],
             std=[0.2266, 0.2237, 0.2316]
@@ -98,12 +103,11 @@ def calculate_mean_std(dataset):
     stds = []
 
     for img, _ in tqdm(dataset, desc="Computing mean/std"):
-        means.append(torch.mean(img, dim=(1,2)))  # mean per channel
-        stds.append(torch.std(img, dim=(1,2)))    # std per channel
+        means.append(torch.mean(img, dim=(1, 2)))  # mean per channel
+        stds.append(torch.std(img, dim=(1, 2)))  # std per channel
 
     means = torch.stack(means).mean(0)
     stds = torch.stack(stds).mean(0)
 
     print(f"Mean per channel(R, G, B): {means}")
     print(f"Std per channel(R, G, B): {stds}")
-

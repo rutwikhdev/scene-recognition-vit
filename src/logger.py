@@ -3,6 +3,7 @@ import os.path as osp
 import sys
 import errno
 
+
 def mkdir_if_missing(directory):
     if not osp.exists(directory):
         try:
@@ -49,4 +50,3 @@ class Logger:
         self.console.close()
         if self.file is not None:
             self.file.close()
-

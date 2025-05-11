@@ -1,6 +1,7 @@
 import torch.nn as nn
 from transformers import AutoModelForImageClassification
 
+
 def load_vit_model(model="vit_base", num_labels=40):
     if model == "vit_base":
         model = AutoModelForImageClassification.from_pretrained(
@@ -15,9 +16,7 @@ def load_vit_model(model="vit_base", num_labels=40):
             "microsoft/swinv2-tiny-patch4-window8-256"
         )
     elif model == "dinov2":
-        model = AutoModelForImageClassification.from_pretrained(
-            "facebook/dinov2-base"
-        )
+        model = AutoModelForImageClassification.from_pretrained("facebook/dinov2-base")
     else:
         raise Exception("Model architecture not supported")
 
@@ -28,4 +27,3 @@ def load_vit_model(model="vit_base", num_labels=40):
     model.classifier = nn.Linear(model.classifier.in_features, num_labels)
 
     return model
-

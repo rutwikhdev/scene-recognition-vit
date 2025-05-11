@@ -25,7 +25,7 @@ Running log file is saved in logs/ directory and tensorboard data is saved in ru
 
 ## Best Results
 > [!Note]
-> All the results below were generated with a batch-size of 128 and the accuracies mentioned below are for validation set.
+> All the results were generated with a batch-size of 128 and the accuracies mentioned are for validation set(randomly split in dataset.py)
 
 | Model   | Learning Rate | LR Scheduler    | Top-1 Accuracy | Top-5 Accuracy | Epochs | Log File                |
 |---------|:-------------:|----------------:|:--------------:|:--------------:|:------:|------------------------|

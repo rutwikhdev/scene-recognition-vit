@@ -29,6 +29,17 @@ We have included 3 notebooks,
 2. 02_validation_analysis.ipynb - Evaluation on validation set and visualizations.
 3. 03_testset.ipynb - Can run same evaluations as validation on [test_set](https://drive.google.com/drive/folders/1vsIbblGiXFPAWVWG_dmkOqhMtezGlczj?usp=sharing) or predict classes for individual images. This notebook also visualizes attention maps
 
+Alternatively after installing all the dependencies above you can run,
+```
+python3 download_models.py
+streamlit run stream.py
+```
+This will provide an interactive UI
+
+![Screenshot From 2025-05-12 13-19-22](https://github.com/user-attachments/assets/53b1d2c0-11af-4282-b7b0-093aed60072f)
+![Screenshot From 2025-05-12 13-19-38](https://github.com/user-attachments/assets/50b13286-1d1e-4787-939b-aad5f46f51fa)
+
+
 ## Best Results
 > [!Note]
 > All the results were generated with a batch-size of 128 and the accuracies mentioned are for validation set(randomly split in dataset.py)

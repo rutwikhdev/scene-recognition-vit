@@ -1,0 +1,6 @@
+
+==========
+
+Using device:  cuda
+Model: dino classifier
+Learning Rate: 0.0003

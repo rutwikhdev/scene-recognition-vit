@@ -1,0 +1,29 @@
+
+==========
+
+Using device:  cuda
+Model: dino classifier
+Learning Rate: 0.0003
+Loading model
+vit_base Loaded
+
+==========Starting Training========
+
+Step 0/3500  train_loss = 3.7580  val_loss = 3.7619
+Step 100/3500  train_loss = 1.5158  val_loss = 1.1094
+Step 200/3500  train_loss = 1.3848  val_loss = 0.9241
+Step 300/3500  train_loss = 1.3170  val_loss = 0.9010
+Step 400/3500  train_loss = 1.2633  val_loss = 0.8377
+Step 500/3500  train_loss = 1.2280  val_loss = 0.8148
+Step 600/3500  train_loss = 1.1922  val_loss = 0.8060
+Step 700/3500  train_loss = 1.2155  val_loss = 0.8147
+Step 800/3500  train_loss = 1.2111  val_loss = 0.7824
+Step 900/3500  train_loss = 1.2070  val_loss = 0.8105
+Step 1000/3500  train_loss = 1.1950  val_loss = 0.7882
+Step 1100/3500  train_loss = 1.1788  val_loss = 0.7828
+Step 1200/3500  train_loss = 1.1676  val_loss = 0.7797
+Step 1300/3500  train_loss = 1.1011  val_loss = 0.7582
+Step 1400/3500  train_loss = 1.1300  val_loss = 0.7585
+Step 1500/3500  train_loss = 1.0990  val_loss = 0.7755
+Step 1600/3500  train_loss = 1.1164  val_loss = 0.7791
+Step 1700/3500  train_loss = 1.1213  val_loss = 0.7625

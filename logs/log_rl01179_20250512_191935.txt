@@ -1,0 +1,50 @@
+
+==========
+
+Using device:  cuda
+Model: dino classifier
+Learning Rate: 0.0003
+Loading model
+vit_base Loaded
+
+==========Starting Training========
+
+Step 0/3500  train_loss = 4.4298  val_loss = 4.3943
+Step 100/3500  train_loss = 2.3309  val_loss = 1.9148
+Step 200/3500  train_loss = 1.8099  val_loss = 1.3390
+Step 300/3500  train_loss = 1.5954  val_loss = 1.1389
+Step 400/3500  train_loss = 1.5122  val_loss = 1.0299
+Step 500/3500  train_loss = 1.4396  val_loss = 0.9904
+Step 600/3500  train_loss = 1.4037  val_loss = 0.9388
+Step 700/3500  train_loss = 1.3773  val_loss = 0.9128
+Step 800/3500  train_loss = 1.3782  val_loss = 0.8920
+Step 900/3500  train_loss = 1.3186  val_loss = 0.8803
+Step 1000/3500  train_loss = 1.3126  val_loss = 0.8499
+Step 1100/3500  train_loss = 1.3053  val_loss = 0.8453
+Step 1200/3500  train_loss = 1.2929  val_loss = 0.8457
+Step 1300/3500  train_loss = 1.2402  val_loss = 0.8311
+Step 1400/3500  train_loss = 1.2494  val_loss = 0.8231
+Step 1500/3500  train_loss = 1.2167  val_loss = 0.8155
+Step 1600/3500  train_loss = 1.2318  val_loss = 0.8129
+Step 1700/3500  train_loss = 1.2194  val_loss = 0.8035
+Step 1800/3500  train_loss = 1.1916  val_loss = 0.7998
+Step 1900/3500  train_loss = 1.2158  val_loss = 0.7987
+Step 2000/3500  train_loss = 1.2303  val_loss = 0.7983
+Step 2100/3500  train_loss = 1.2501  val_loss = 0.7979
+Step 2200/3500  train_loss = 1.2339  val_loss = 0.7826
+Step 2300/3500  train_loss = 1.1821  val_loss = 0.7968
+Step 2400/3500  train_loss = 1.1800  val_loss = 0.7926
+Step 2500/3500  train_loss = 1.1916  val_loss = 0.7773
+Step 2600/3500  train_loss = 1.1825  val_loss = 0.7800
+Step 2700/3500  train_loss = 1.2132  val_loss = 0.7818
+Step 2800/3500  train_loss = 1.1913  val_loss = 0.7714
+Step 2900/3500  train_loss = 1.1539  val_loss = 0.7779
+Step 3000/3500  train_loss = 1.1600  val_loss = 0.7641
+Step 3100/3500  train_loss = 1.1904  val_loss = 0.7695
+Step 3200/3500  train_loss = 1.1394  val_loss = 0.7795
+Step 3300/3500  train_loss = 1.1619  val_loss = 0.7680
+Step 3400/3500  train_loss = 1.1404  val_loss = 0.7706
+
+========Testing on validation set==========
+
+Model saved as dino_classifier.pth

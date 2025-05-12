@@ -1,9 +1,0 @@
-
-==========
-
-Using device:  cuda
-Model: dino classifier
-Learning Rate: 0.0003
-Loading model
-vit_base Loaded
-Generating Embeddings from dinov2

@@ -1,0 +1,9 @@
+
+==========
+
+Using device:  cuda
+Model: vit_base
+Learning Rate: 0.0003
+LR Scheduler: oncyclelr
+Epochs: 5
+Batch Size: 128

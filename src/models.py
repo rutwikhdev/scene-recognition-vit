@@ -17,12 +17,19 @@ def load_vit_model(model_name="vit_base", num_labels=40):
             "microsoft/swinv2-tiny-patch4-window8-256"
         )
     elif model_name == "dinov2":
-        model = torch.hub.load("facebookresearch/dinov2", "dinov2_vits14")
+        model = AutoModelForImageClassification.from_pretrained(
+            "facebook/dinov2-base"
+        )
+    elif model_name == "dinov2-embed":
+        model = torch.hub.load(
+            "facebookresearch/dinov2",
+            "dinov2_vits14"
+        )
     else:
         raise Exception("Model architecture not supported")
 
     # remove gradient computation from existing layers
-    if model_name != 'dinov2':
+    if model_name != 'dinov2-embed':
         for p in model.parameters():
             p.requires_grad = False
 

@@ -8,3 +8,5 @@ tqdm
 seaborn
 numpy==1.23.5
 gdown
+streamlit
+opencv-python

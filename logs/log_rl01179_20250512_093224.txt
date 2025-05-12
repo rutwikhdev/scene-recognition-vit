@@ -1,0 +1,17 @@
+
+==========
+
+Using device:  cuda
+Model: dino classifier
+Learning Rate: 0.001
+Loading model
+dinov2 Loaded
+Generating Embeddings from dinov2
+
+==========Starting Training========
+
+
+========Testing on validation set==========
+
+tensor(39, device='cuda:0') tensor(39)
+torch.Size([8000, 5]) torch.Size([8000])

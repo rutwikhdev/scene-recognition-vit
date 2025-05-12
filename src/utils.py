@@ -104,7 +104,7 @@ def plot_confusion_matrix(model, dataloader, class_names, device, save_path="con
     model.eval()
     all_preds = []
     all_labels = []
-
+    
     with torch.no_grad():
         for images, labels in dataloader:
             images = images.to(device)

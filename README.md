@@ -23,6 +23,19 @@ python train.py \
 ```
 Running log file is saved in logs/ directory and tensorboard data is saved in runs/ which can be visualized as ```tensorboard --logdir=runs```
 
+## Best Results
+> [!Note]
+> All the results were generated with a batch-size of 128 and the accuracies mentioned are for validation set(randomly split in dataset.py)
+
+| Model   | Learning Rate | LR Scheduler    | Top-1 Accuracy | Top-5 Accuracy | Epochs | Log File                |
+|---------|:-------------:|----------------:|:--------------:|:--------------:|:------:|------------------------|
+| vit_base | 3e-4          | None          | 70.1%          | 93.4%          |  10    | [Log](https://github.com/rutwikhdev/scene-recognition-vit/blob/main/logs/log_rh01555_20250511_161503/log_rh01555_20250511_161503.txt)    |
+| swin | 3e-4         | None | 66.3%          | 92.6%          | 10    | [Log](https://github.com/rutwikhdev/scene-recognition-vit/blob/main/logs/log_rh01555_20250511_161504/log_rh01555_20250511_161504.txt)    |
+| swinv2 | 3e-4         | None     | 66.1%          | 92.5%          |  10   | [Log](https://github.com/rutwikhdev/scene-recognition-vit/blob/main/logs/log_rh01555_20250511_164752/log_rh01555_20250511_164752.txt)    |
+| vit_base | 4e-4         | CosineAnnealingLR     | 70.0%          | 93.4%          |  10   | [Log](https://github.com/rutwikhdev/scene-recognition-vit/blob/main/logs/log_rh01555_20250511_173323/log_rh01555_20250511_173323.txt)    |
+| dinov2 | 3e-4         | CosineAnnealingLR | 80.9%          | 97.6%          |  10   | [Log](https://github.com/rutwikhdev/scene-recognition-vit/blob/main/logs/log_rh01555_20250511_170355/log_rh01555_20250511_170355.txt)    |
+
+
 ## Visualising Pre-trained models
 We have included 3 notebooks,
 1. 01_data_analysis.ipynb - Basic data visualizations to understand what we are working with
@@ -40,14 +53,3 @@ This will provide an interactive UI
 ![Screenshot From 2025-05-12 13-19-38](https://github.com/user-attachments/assets/50b13286-1d1e-4787-939b-aad5f46f51fa)
 
 
-## Best Results
-> [!Note]
-> All the results were generated with a batch-size of 128 and the accuracies mentioned are for validation set(randomly split in dataset.py)
-
-| Model   | Learning Rate | LR Scheduler    | Top-1 Accuracy | Top-5 Accuracy | Epochs | Log File                |
-|---------|:-------------:|----------------:|:--------------:|:--------------:|:------:|------------------------|
-| vit_base | 3e-4          | None          | 70.1%          | 93.4%          |  10    | [Log](https://github.com/rutwikhdev/scene-recognition-vit/blob/main/logs/log_rh01555_20250511_161503/log_rh01555_20250511_161503.txt)    |
-| swin | 3e-4         | None | 66.3%          | 92.6%          | 10    | [Log](https://github.com/rutwikhdev/scene-recognition-vit/blob/main/logs/log_rh01555_20250511_161504/log_rh01555_20250511_161504.txt)    |
-| swinv2 | 3e-4         | None     | 66.1%          | 92.5%          |  10   | [Log](https://github.com/rutwikhdev/scene-recognition-vit/blob/main/logs/log_rh01555_20250511_164752/log_rh01555_20250511_164752.txt)    |
-| vit_base | 4e-4         | CosineAnnealingLR     | 70.0%          | 93.4%          |  10   | [Log](https://github.com/rutwikhdev/scene-recognition-vit/blob/main/logs/log_rh01555_20250511_173323/log_rh01555_20250511_173323.txt)    |
-| dinov2 | 3e-4         | CosineAnnealingLR | 80.9%          | 97.6%          |  10   | [Log](https://github.com/rutwikhdev/scene-recognition-vit/blob/main/logs/log_rh01555_20250511_170355/log_rh01555_20250511_170355.txt)    |

@@ -31,7 +31,7 @@ def load_vit_model(model_name="vit_base", num_labels=40):
     # remove gradient computation from existing layers
     if model_name != 'dinov2-embed':
         for p in model.parameters():
-            p.requires_grad = True
+            p.requires_grad = False
 
         model.classifier = nn.Linear(model.classifier.in_features, num_labels)
 

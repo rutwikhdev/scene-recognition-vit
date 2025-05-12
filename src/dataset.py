@@ -19,11 +19,13 @@ def get_dataloaders(data_dir, batch_size=64, cutmixup=False):
     """
     train_transforms = transforms.Compose(
         [
-            transforms.RandomResizedCrop((224, 224)),
+            transforms.Resize((224, 224)),
             # Horizontal Flip
-            transforms.RandAugment(),
+            transforms.RandomHorizontalFlip(),
+            # Rotation
+            transforms.RandomRotation(20),
             # Scaling
-            # transforms.RandomAffine(degrees=0, translate=(0.1, 0.1), scale=(0.8, 1.2)),
+            transforms.RandomAffine(degrees=0, translate=(0.1, 0.1), scale=(0.8, 1.2)),
             transforms.ToTensor(),
             # Normalize around mean and std for better convergence
             transforms.Normalize(
@@ -34,8 +36,7 @@ def get_dataloaders(data_dir, batch_size=64, cutmixup=False):
 
     val_transforms = transforms.Compose(
         [
-            transforms.Resize((256, 256)),
-            transforms.CenterCrop(224),
+            transforms.Resize((224, 224)),
             transforms.ToTensor(),
             transforms.Normalize(
                 mean=[0.4547, 0.4337, 0.4011], std=[0.2266, 0.2237, 0.2316]
@@ -68,11 +69,10 @@ def get_dataloaders(data_dir, batch_size=64, cutmixup=False):
         shuffle=True,
         collate_fn=cutmixup_da if cutmixup else None,
     )
-    
     test_loader = DataLoader(
         val_dataset,
         batch_size=batch_size,
-        shuffle=True,
+        shuffle=False,
         # collate_fn=cutmixup_da if cutmixup else None
     )
 

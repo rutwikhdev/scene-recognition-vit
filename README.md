@@ -23,6 +23,12 @@ python train.py \
 ```
 Running log file is saved in logs/ directory and tensorboard data is saved in runs/ which can be visualized as ```tensorboard --logdir=runs```
 
+## Visualising Pre-trained models
+We have included 3 notebooks,
+1. 01_data_analysis.ipynb - Basic data visualizations to understand what we are working with
+2. 02_validation_analysis.ipynb - Evaluation on validation set and visualizations.
+3. 03_testset.ipynb - Can run same evaluations as validation on [test_set](https://drive.google.com/drive/folders/1vsIbblGiXFPAWVWG_dmkOqhMtezGlczj?usp=sharing) or predict classes for individual images. This notebook also visualizes attention maps
+
 ## Best Results
 > [!Note]
 > All the results were generated with a batch-size of 128 and the accuracies mentioned are for validation set(randomly split in dataset.py)

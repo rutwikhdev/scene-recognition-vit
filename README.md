@@ -1,15 +1,20 @@
 ## Install Dependencies
 
-1. Download pytorch
+1. Create a new conda environment
+```
+conda create --name scenerec -y python=3.10
+conda activate scenerec
+```
+2. Download pytorch
 ```
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 ```
-2. Clone repo and install rest of the requirements
+3. Clone repo and install rest of the requirements
 ```
 git clone https://github.com/rutwikhdev/scene-recognition-vit && cd scene-recognition-vit
 pip install -r requirements
 ```
-3. Download custom scene-recognition dataset and place it in ```/data/{dataset_name}```
+4. Download custom scene-recognition dataset and place it in ```/data/{dataset_name}```
 
 ## Run Experiments
 ```

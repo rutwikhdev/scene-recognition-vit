@@ -47,9 +47,7 @@ def train(args):
     )
     torch.set_float32_matmul_precision("high")
 
-    model = load_vit_model(args.model_name, num_labels=len(class_names)).to(
-        device
-    )
+    model = load_vit_model(args.model_name, num_labels=len(class_names)).to(device)
     model = torch.compile(model)
 
     # setup optimizer, lr_scheduler, loss and tensorboard

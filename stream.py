@@ -8,24 +8,57 @@ import cv2
 from transformers import AutoImageProcessor
 
 CLASS_LABELS = [
-    "airport_terminal", "amphitheatre","amusement_park", "art_gallery",
-    "bakery_shop","bar","bookstore", "botanical_garden","bridge",
-    "bus interior","butchers shop","campsite","classroom","coffee_shop",
-    "construction_site","courtyard","driveway","fire_station","fountain",
-    "gas_station","harbour","highway","kindergarten_classroom","lobby",
-    "market_outdoor","museum","office","parking_lot","phone_booth",
-    "playground","railroad_track","restaurant","river","shed","staircase",
-    "supermarket","swomming_pool_outdoor","track","valley","yard"
+    "airport_terminal",
+    "amphitheatre",
+    "amusement_park",
+    "art_gallery",
+    "bakery_shop",
+    "bar",
+    "bookstore",
+    "botanical_garden",
+    "bridge",
+    "bus interior",
+    "butchers shop",
+    "campsite",
+    "classroom",
+    "coffee_shop",
+    "construction_site",
+    "courtyard",
+    "driveway",
+    "fire_station",
+    "fountain",
+    "gas_station",
+    "harbour",
+    "highway",
+    "kindergarten_classroom",
+    "lobby",
+    "market_outdoor",
+    "museum",
+    "office",
+    "parking_lot",
+    "phone_booth",
+    "playground",
+    "railroad_track",
+    "restaurant",
+    "river",
+    "shed",
+    "staircase",
+    "supermarket",
+    "swomming_pool_outdoor",
+    "track",
+    "valley",
+    "yard",
 ]
 
 MODEL_OPTIONS = {
     "DINOv2": ("dinov2", "./dino.pth", "facebook/dinov2-base"),
     "ViT": ("vit_base", "./vit.pth", "google/vit-base-patch16-224"),
-    "Swin": ("swin", "./swin.pth", "microsoft/swin-tiny-patch4-window7-224")
+    "Swin": ("swin", "./swin.pth", "microsoft/swin-tiny-patch4-window7-224"),
 }
 
 selected_model_name = st.selectbox("Select a Model", list(MODEL_OPTIONS.keys()))
 selected_arch, selected_path, img_processor = MODEL_OPTIONS[selected_model_name]
+
 
 @st.cache_resource
 def load_model(arch, path):
@@ -38,16 +71,19 @@ def load_model(arch, path):
     model.eval()
     return model
 
+
 model = load_model(selected_arch, selected_path)
 feature_extractor = AutoImageProcessor.from_pretrained(img_processor)
+
 
 def preprocess_image(img):
     return feature_extractor(images=img, return_tensors="pt")
 
+
 def visualize_attention(img, outputs):
     # Extract and average attention across layers and heads
-    attentions = outputs.attentions  
-    attn = torch.stack(attentions)  
+    attentions = outputs.attentions
+    attn = torch.stack(attentions)
     attn = attn[:, 0]
     attn = attn.mean(dim=0)
 
@@ -59,7 +95,7 @@ def visualize_attention(img, outputs):
     attn_size = int(np.sqrt(num_patches))
 
     # Confirm patch count is square
-    assert attn_size ** 2 == num_patches, "Unexpected number of patches"
+    assert attn_size**2 == num_patches, "Unexpected number of patches"
 
     # Prepare image dimensions
     w, h = img.size
@@ -102,7 +138,7 @@ st.markdown(
         }
     </style>
     """,
-    unsafe_allow_html=True
+    unsafe_allow_html=True,
 )
 
 uploaded_file = st.file_uploader("Upload an Image", type=["jpg", "png", "jpeg"])
@@ -121,4 +157,3 @@ if uploaded_file:
 
     st.subheader("Attention Heads Visualization")
     visualize_attention(image, outputs)
-

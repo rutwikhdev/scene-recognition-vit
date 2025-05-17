@@ -16,7 +16,8 @@ import getpass
 
 from datetime import datetime
 
-torch.set_float32_matmul_precision("high") # enable tf32
+torch.set_float32_matmul_precision("high")  # enable tf32
+
 
 def train(args):
     set_random_seed()
@@ -48,7 +49,7 @@ def train(args):
         nn.Linear(384, len(classes)),
     ).to(device)
 
-    #gcc for neural nets, removes python overhead 
+    # gcc for neural nets, removes python overhead
     model = torch.compile(model)
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=args.lr)
@@ -58,7 +59,7 @@ def train(args):
     def estimate_loss(eval_steps):
         model.eval()
         out = {}
-        for split, loader in [('train', train_loader), ('val', val_loader)]:
+        for split, loader in [("train", train_loader), ("val", val_loader)]:
             losses = []
             for i, (x, y) in enumerate(loader):
                 if i >= eval_steps:
@@ -86,7 +87,7 @@ def train(args):
                 total += y.size(0)
         acc = correct / total
         top5 = top5_correct / total
-        return {'acc': acc, 'top5': top5}
+        return {"acc": acc, "top5": top5}
 
     print("\n==========Starting Training========\n")
     max_steps = 3500
@@ -97,7 +98,7 @@ def train(args):
                 break
             x, y = x.to(device), y.to(device)
             optimizer.zero_grad()
-            with torch.autocast(device_type='cuda', dtype = torch.bfloat16):
+            with torch.autocast(device_type="cuda", dtype=torch.bfloat16):
                 logits = model(x)
                 loss = F.cross_entropy(logits, y)
                 loss.backward()
@@ -105,16 +106,18 @@ def train(args):
 
             if step % 100 == 0:
                 out = estimate_loss(100)
-                print(f"Step {step}/{max_steps}  train_loss = {out['train']:.4f}  val_loss = {out['val']:.4f}")
-                writer.add_scalar("Loss/train", out['train'], step)
-                writer.add_scalar("Loss/val", out['val'], step)
+                print(
+                    f"Step {step}/{max_steps}  train_loss = {out['train']:.4f}  val_loss = {out['val']:.4f}"
+                )
+                writer.add_scalar("Loss/train", out["train"], step)
+                writer.add_scalar("Loss/val", out["val"], step)
 
             step += 1
 
     print("\n========Testing on validation set==========\n")
     out = evaluate()
-    writer.add_scalar("Accuracy/Top1", out['acc'], step)
-    writer.add_scalar("Accuracy/Top5", out['top5'], step)
+    writer.add_scalar("Accuracy/Top1", out["acc"], step)
+    writer.add_scalar("Accuracy/Top5", out["top5"], step)
 
     torch.save(model.state_dict(), "dino_classifier.pth")
     print("Model saved as dino_classifier.pth")
